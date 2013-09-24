@@ -2,6 +2,7 @@ package gojenkins
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -19,8 +20,16 @@ type Job struct {
 	Color string
 }
 
+type Artifact struct {
+	DisplayPath  string
+	FileName     string
+	RelativePath string
+}
+
 func (j Jenkins) Get(url string) (map[string]interface{}, error) {
 	client := &http.Client{}
+
+	log.Println(j.Baseurl + url + "/api/json")
 
 	r, err := http.NewRequest("GET", j.Baseurl+url+"/api/json", nil)
 	r.SetBasicAuth(j.username, j.password)
@@ -52,13 +61,28 @@ func (j Jenkins) Jobs() (map[string]Job, error) {
 	for _, job := range resp["jobs"].([]interface{}) {
 		entry := job.(map[string]interface{})
 		j := Job{
-			Name:  entry["name"].(string),
-			URL:   entry["url"].(string),
-			Color: entry["color"].(string),
+			Name:  fmt.Sprint(entry["name"]),
+			URL:   fmt.Sprint(entry["url"]),
+			Color: fmt.Sprint(entry["color"]),
 		}
 		jobs[entry["name"].(string)] = j
 	}
 	return jobs, err
+}
+
+// List artifacts from the provided build of the job specified by name
+func (j Jenkins) Artifacts(name, build string) ([]Artifact, error) {
+	resp, err := j.Get("/job/" + name + "/" + build)
+	artifacts := make([]Artifact, len(resp["artifacts"].([]interface{})))
+	for idx, artifact := range resp["artifacts"].([]interface{}) {
+		entry := artifact.(map[string]interface{})
+		artifacts[idx] = Artifact{
+			DisplayPath:  fmt.Sprint(entry["displayPath"]),
+			FileName:     fmt.Sprint(entry["fileName"]),
+			RelativePath: fmt.Sprint(entry["relativePath"]),
+		}
+	}
+	return artifacts, err
 }
 
 // Sets the authentication for the Jenkins service
