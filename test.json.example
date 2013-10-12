@@ -1,0 +1,6 @@
+{
+    "Baseurl": "http://build.test.com",
+    "Username": "John",
+    "Password": "1cfaa7601da4d0fb4b8615615a3cc8af",
+    "TestJob" : "some-jenkins-job"
+}
