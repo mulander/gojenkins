@@ -3,6 +3,7 @@ package gojenkins
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -83,6 +84,26 @@ func (j Jenkins) Artifacts(name, build string) ([]Artifact, error) {
 		}
 	}
 	return artifacts, err
+}
+
+// Download the artifact from the specified build of the provided job
+// returns a Reader of the artifact
+func (j Jenkins) Download(job Job, build string, a Artifact) io.ReadCloser {
+	client := &http.Client{}
+
+	url := j.Baseurl + "/job/" + job.Name + "/" + build + "/artifact/" + a.RelativePath
+	log.Println(url)
+
+	r, err := http.NewRequest("GET", url, nil)
+	r.SetBasicAuth(j.username, j.password)
+
+	resp, err := client.Do(r)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println(resp.StatusCode)
+
+	return resp.Body
 }
 
 // Sets the authentication for the Jenkins service
