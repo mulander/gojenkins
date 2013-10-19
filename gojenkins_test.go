@@ -54,7 +54,13 @@ func TestJobs(t *testing.T) {
 
 func TestArtifacts(t *testing.T) {
 	Init()
-	artifacts, _ := jenkins.Artifacts(testJob, "lastSuccessfulBuild")
+
+	jobs, err := jenkins.Jobs()
+	if err != nil {
+		t.Error(err)
+	}
+
+	artifacts, _ := jenkins.Artifacts(jobs[testJob], "lastSuccessfulBuild")
 	for _, artifact := range artifacts {
 		t.Log(artifact.FileName)
 	}
@@ -83,7 +89,7 @@ func TestDownloadArtifactsLatest(t *testing.T) {
 		t.Error(err)
 	}
 
-	artifacts, _ := jenkins.Artifacts(testJob, "lastSuccessfulBuild")
+	artifacts, _ := jenkins.Artifacts(jobs[testJob], "lastSuccessfulBuild")
 	for _, artifact := range artifacts {
 		t.Logf("Downloading file: %s\n", artifact.FileName)
 		out, err := os.Create(artifact.FileName)
