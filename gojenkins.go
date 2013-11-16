@@ -74,6 +74,9 @@ func (j Jenkins) Jobs() (map[string]Job, error) {
 // List artifacts from the provided build of the job
 func (j Jenkins) Artifacts(job Job, build string) ([]Artifact, error) {
 	resp, err := j.Get("/job/" + job.Name + "/" + build)
+	if err != nil {
+		return nil, err
+	}
 	artifacts := make([]Artifact, len(resp["artifacts"].([]interface{})))
 	for idx, artifact := range resp["artifacts"].([]interface{}) {
 		entry := artifact.(map[string]interface{})
