@@ -95,6 +95,9 @@ func (j Jenkins) Download(job Job, build string, a Artifact) io.ReadCloser {
 	log.Println(url)
 
 	r, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
 	r.SetBasicAuth(j.username, j.password)
 
 	resp, err := client.Do(r)
