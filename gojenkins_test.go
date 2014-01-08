@@ -48,13 +48,29 @@ func TestAuth(t *testing.T) {
 }
 
 func TestParseError(t *testing.T) {
-	Init()
 	jenkins = &Jenkins{
 		Baseurl: "http://example.com",
 	}
 	_, err := jenkins.Get("")
 	if err == nil {
 		t.Errorf("Expected a parsing error because the target is not a jenkins instance")
+	}
+}
+
+func TestJobsParseError(t *testing.T) {
+	jenkins = &Jenkins{
+		Baseurl: "http://example.com",
+	}
+
+	defer func() {
+		if r := recover(); r != nil {
+			t.Error("jenkins.Jobs() on an incorrect url should not panic")
+		}
+	}()
+
+	_, err := jenkins.Jobs()
+	if err == nil {
+		t.Error("Expected to receive an error from calling jenkins.Jobs() on an incorrect url")
 	}
 }
 

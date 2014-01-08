@@ -59,6 +59,9 @@ func (j Jenkins) Get(url string) (map[string]interface{}, error) {
 // List all jobs on the Baseurl Jenkins server
 func (j Jenkins) Jobs() (map[string]Job, error) {
 	resp, err := j.Get("")
+	if err != nil {
+		return nil, err
+	}
 	jobs := make(map[string]Job)
 	for _, job := range resp["jobs"].([]interface{}) {
 		entry := job.(map[string]interface{})
@@ -69,7 +72,7 @@ func (j Jenkins) Jobs() (map[string]Job, error) {
 		}
 		jobs[entry["name"].(string)] = j
 	}
-	return jobs, err
+	return jobs, nil
 }
 
 // List artifacts from the provided build of the job
