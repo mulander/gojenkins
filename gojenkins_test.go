@@ -115,6 +115,60 @@ func TestArtifacts(t *testing.T) {
 	}
 }
 
+func TestArtifactsParseError(t *testing.T) {
+	jenkins = &Jenkins{
+		Baseurl: "http://example.com",
+	}
+
+	defer func() {
+		if r := recover(); r != nil {
+			t.Error("jenkins.Artifacts() on an incorrect url/data should not panic")
+		}
+	}()
+
+	_, err := jenkins.Artifacts(Job{"bad-job", "bad-job", "bad-color"}, "bad-build")
+	if err == nil {
+		t.Error("Expected to receive an error from calling jenkins.Artifacts() on an incorrect url/data")
+	}
+	t.Log(err)
+}
+
+func TestArtifactsBadJobBuild(t *testing.T) {
+	Init()
+	defer func() {
+		if r := recover(); r != nil {
+			t.Error("jenkins.Artifacts() on an incorrect job should not panic")
+		}
+	}()
+
+	_, err := jenkins.Artifacts(Job{"bad-job", "bad-job", "bad-color"}, "bad-build")
+	if err == nil {
+		t.Error("Expected to receive an error from calling jenkins.Artifacts() on an incorrect url/data")
+	}
+	t.Log(err)
+}
+
+func TestArtifactsBadBuild(t *testing.T) {
+	Init()
+	defer func() {
+		if r := recover(); r != nil {
+			t.Error("jenkins.Artifacts() on an incorrect job should not panic")
+		}
+	}()
+
+	jobs, err := jenkins.Jobs()
+	if err != nil {
+		t.Errorf("Did not expect an error from listing jobs but got: ", err.Error())
+	}
+	for _, job := range jobs {
+		_, err = jenkins.Artifacts(job, "bad-build")
+		if err == nil {
+			t.Error("Expected to receive an error from calling jenkins.Artifacts() on an incorrect url/data")
+		}
+		t.Log(err)
+	}
+}
+
 func TestDownloadArtifactsLatest(t *testing.T) {
 	Init()
 
