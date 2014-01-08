@@ -31,7 +31,7 @@ func (j Jenkins) Get(url string) (map[string]interface{}, error) {
 	client := &http.Client{}
 	target := j.Baseurl + url + "/api/json"
 
-	log.Println(target)
+	//log.Println(target)
 
 	r, err := http.NewRequest("GET", j.Baseurl+url+"/api/json", nil)
 	r.SetBasicAuth(j.username, j.password)
@@ -56,7 +56,7 @@ func (j Jenkins) Get(url string) (map[string]interface{}, error) {
 	if err != nil {
 		return nil, fmt.Errorf("gojenkins: Error parsing response from %s - %s", target, err.Error())
 	}
-	log.Printf("%s", result)
+	//log.Printf("%s", result)
 	return result, nil
 }
 
@@ -103,7 +103,7 @@ func (j Jenkins) Download(job Job, build string, a Artifact) io.ReadCloser {
 	client := &http.Client{}
 
 	url := j.Baseurl + "/job/" + job.Name + "/" + build + "/artifact/" + a.RelativePath
-	log.Println(url)
+	//log.Println(url)
 
 	r, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -115,7 +115,7 @@ func (j Jenkins) Download(job Job, build string, a Artifact) io.ReadCloser {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println(resp.StatusCode)
+	//log.Println(resp.StatusCode)
 
 	return resp.Body
 }
