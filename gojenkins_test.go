@@ -66,6 +66,16 @@ func TestParseError(t *testing.T) {
 	}
 }
 
+func TestBadURL(t *testing.T) {
+	jenkins = &Jenkins{
+		Baseurl: "htt://example.com",
+	}
+	_, err := jenkins.Get("")
+	if err == nil {
+		t.Errorf("Expected a net/http error for incorrect URL")
+	}
+}
+
 func TestJobsParseError(t *testing.T) {
 	jenkins = &Jenkins{
 		Baseurl: "http://example.com",

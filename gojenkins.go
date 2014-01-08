@@ -38,7 +38,7 @@ func (j Jenkins) Get(url string) (map[string]interface{}, error) {
 
 	resp, err := client.Do(r)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 	defer resp.Body.Close()
 
