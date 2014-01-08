@@ -52,7 +52,7 @@ func TestBadAuth(t *testing.T) {
 	jenkins.SetAuth("bad", "auth")
 	_, err := jenkins.Get("")
 	if err == nil {
-		t.Error("Incorrect authorization shuold return an error")
+		t.Error("Incorrect authorization should return an error")
 	}
 }
 
@@ -169,6 +169,15 @@ func TestArtifactsBadBuild(t *testing.T) {
 	}
 }
 
+func TestDownloadNoAuth(t *testing.T) {
+	Init()
+	jenkins.SetAuth("bad", "auth")
+	_, err := jenkins.Download(Job{"bad-job", "bad-job", "bad-color"}, "lastSuccessfulBuild", Artifact{"bad-path", "bad-file", "bad-relative-path"})
+	if err == nil {
+		t.Error("test jenkins.Download: Incorrect authorization should return an error")
+	}
+}
+
 func TestDownloadArtifactsLatest(t *testing.T) {
 	Init()
 
@@ -201,7 +210,10 @@ func TestDownloadArtifactsLatest(t *testing.T) {
 		}
 		defer out.Close()
 
-		a := jenkins.Download(jobs[testJob], "lastSuccessfulBuild", artifact)
+		a, err := jenkins.Download(jobs[testJob], "lastSuccessfulBuild", artifact)
+		if err != nil {
+			t.Error("Downloading a proper artifact should not result in an error")
+		}
 		defer a.Close()
 
 		_, err = io.Copy(out, a)

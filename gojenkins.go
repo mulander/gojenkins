@@ -99,7 +99,7 @@ func (j Jenkins) Artifacts(job Job, build string) ([]Artifact, error) {
 
 // Download the artifact from the specified build of the provided job
 // returns a Reader of the artifact
-func (j Jenkins) Download(job Job, build string, a Artifact) io.ReadCloser {
+func (j Jenkins) Download(job Job, build string, a Artifact) (io.ReadCloser, error) {
 	client := &http.Client{}
 
 	url := j.Baseurl + "/job/" + job.Name + "/" + build + "/artifact/" + a.RelativePath
@@ -115,9 +115,13 @@ func (j Jenkins) Download(job Job, build string, a Artifact) io.ReadCloser {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	if resp.StatusCode == 401 {
+		return nil, fmt.Errorf("gojenkins: %s", resp.Status)
+	}
 	//log.Println(resp.StatusCode)
 
-	return resp.Body
+	return resp.Body, nil
 }
 
 // Sets the authentication for the Jenkins service
