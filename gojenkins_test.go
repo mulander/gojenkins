@@ -41,7 +41,10 @@ func Init() {
 
 func TestAuth(t *testing.T) {
 	Init()
-	jenkins.Get("")
+	_, err := jenkins.Get("")
+	if err != nil {
+		t.Errorf("Expected proper authentication but instead got:\n%s", err.Error())
+	}
 }
 
 func TestJobs(t *testing.T) {

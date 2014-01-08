@@ -29,8 +29,9 @@ type Artifact struct {
 
 func (j Jenkins) Get(url string) (map[string]interface{}, error) {
 	client := &http.Client{}
+	target := j.Baseurl + url + "/api/json"
 
-	log.Println(j.Baseurl + url + "/api/json")
+	log.Println(target)
 
 	r, err := http.NewRequest("GET", j.Baseurl+url+"/api/json", nil)
 	r.SetBasicAuth(j.username, j.password)
@@ -49,7 +50,7 @@ func (j Jenkins) Get(url string) (map[string]interface{}, error) {
 	result := make(map[string]interface{})
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		log.Fatal(err)
+		return nil, fmt.Errorf("gojenkins: Error parsing response from %s - %s", target, err.Error())
 	}
 	log.Printf("%s", result)
 	return result, nil
