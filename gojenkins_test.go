@@ -47,6 +47,17 @@ func TestAuth(t *testing.T) {
 	}
 }
 
+func TestParseError(t *testing.T) {
+	Init()
+	jenkins = &Jenkins{
+		Baseurl: "http://example.com",
+	}
+	_, err := jenkins.Get("")
+	if err == nil {
+		t.Errorf("Expected a parsing error because the target is not a jenkins instance")
+	}
+}
+
 func TestJobs(t *testing.T) {
 	Init()
 	jobs, _ := jenkins.Jobs()
