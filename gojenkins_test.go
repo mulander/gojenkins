@@ -47,6 +47,15 @@ func TestAuth(t *testing.T) {
 	}
 }
 
+func TestBadAuth(t *testing.T) {
+	Init()
+	jenkins.SetAuth("bad", "auth")
+	_, err := jenkins.Get("")
+	if err == nil {
+		t.Error("Incorrect authorization shuold return an error")
+	}
+}
+
 func TestParseError(t *testing.T) {
 	jenkins = &Jenkins{
 		Baseurl: "http://example.com",

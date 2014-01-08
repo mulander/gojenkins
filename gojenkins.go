@@ -42,6 +42,10 @@ func (j Jenkins) Get(url string) (map[string]interface{}, error) {
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode == 401 {
+		return nil, fmt.Errorf("gojenkins: %s", resp.Status)
+	}
+
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatal(err)
