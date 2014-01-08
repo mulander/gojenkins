@@ -178,6 +178,34 @@ func TestDownloadNoAuth(t *testing.T) {
 	}
 }
 
+func TestDownloadBadBuild(t *testing.T) {
+	Init()
+
+	jobs, err := jenkins.Jobs()
+	if err != nil {
+		t.Error(err)
+	}
+
+	_, err = jenkins.Download(jobs[testJob], "bad-build", Artifact{"bad-path", "bad-file", "bad-relative-path"})
+	if err == nil {
+		t.Error("Asking for a download from a bad build should be an error")
+	}
+}
+
+func TestDownloadBadFile(t *testing.T) {
+	Init()
+
+	jobs, err := jenkins.Jobs()
+	if err != nil {
+		t.Error(err)
+	}
+
+	_, err = jenkins.Download(jobs[testJob], "lastSuccessfulBuild", Artifact{"bad-path", "bad-file", "bad-relative-path"})
+	if err == nil {
+		t.Error("Asking for a download for a bad file should be an error")
+	}
+}
+
 func TestDownloadArtifactsLatest(t *testing.T) {
 	Init()
 

@@ -116,9 +116,13 @@ func (j Jenkins) Download(job Job, build string, a Artifact) (io.ReadCloser, err
 		log.Fatal(err)
 	}
 
-	if resp.StatusCode == 401 {
+	switch resp.StatusCode {
+	case 401:
+		fallthrough
+	case 404:
 		return nil, fmt.Errorf("gojenkins: %s", resp.Status)
 	}
+
 	//log.Println(resp.StatusCode)
 
 	return resp.Body, nil
