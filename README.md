@@ -58,7 +58,7 @@ if err != nil {
 
 // For every job artifact
 for _, artifact := range artifacts {
-	out, err := os.Create(artifat.FileName)
+	out, err := os.Create(artifact.FileName)
 	if err != nil {
 		log.Fatal(err)
 	}
